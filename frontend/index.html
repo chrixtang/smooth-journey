@@ -1,0 +1,684 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>Smooth Journey</title>
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="theme-color" content="#006564">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<style>
+:root{
+  --bg:#FBF7F0;
+  --surface:#FFFFFF;
+  --sand:#F4ECE0;
+  --sand-2:#EBE0CE;
+  --line:#EAE2D4;
+  --ink:#192523;
+  --muted:#64736F;
+  --jade:#006564;
+  --jade-d:#004948;
+  --jade-l:#0E7F7D;
+  --jade-soft:#E7F3F1;
+  --jade-mid:#C2DFDA;
+  --gold:#C58B2A;
+  --gold-soft:#FDF4E2;
+  --gold-line:#EDD4A1;
+  --ok:#1B7A4B;
+  --ok-bg:#E6F5EC;
+  --red:#B93429;
+  --red-bg:#FDECEB;
+  --shadow:0 8px 24px rgba(18,45,42,.06);
+  --r:22px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:#EAE4D7;color:var(--ink);line-height:1.45;-webkit-font-smoothing:antialiased}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+
+/* Outer Desktop Stage & Mobile Full-bleed */
+.stage{min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:18px 12px;background:radial-gradient(circle at 20% 10%,#d9ebe7 0%,#ede6d8 52%,#e6dccb 100%)}
+.phone{width:100%;max-width:420px;height:min(850px,calc(100dvh - 36px));background:var(--bg);border-radius:38px;box-shadow:0 28px 70px rgba(0,40,39,.2),0 0 0 8px #172321;display:flex;flex-direction:column;overflow:hidden;position:relative}
+@media(max-width:520px){
+  .stage{padding:0;background:var(--bg)}
+  .phone{max-width:100%;height:100dvh;border-radius:0;box-shadow:none}
+}
+
+/* Header */
+.appbar{background:linear-gradient(135deg,var(--jade) 0%,var(--jade-d) 100%);color:#fff;padding:14px 18px 13px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-shrink:0;z-index:10}
+.brand{display:flex;align-items:center;gap:11px;min-width:0}
+.brand-wing{width:36px;height:36px;border-radius:12px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.22);display:grid;place-items:center;font-size:17px;flex-shrink:0}
+.brand-title{font-weight:700;font-size:16px;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand-sub{font-size:11.5px;color:rgba(255,255,255,.8);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.appbar-actions{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.icon-btn{padding:6px 11px;border-radius:99px;background:rgba(255,255,255,.16);color:#fff;font-size:12px;font-weight:600;transition:.15s}
+.icon-btn:active{transform:scale(.95)}
+
+/* Scrollable Screen */
+.screen{flex:1;overflow-y:auto;padding:16px 16px 26px;-webkit-overflow-scrolling:touch}
+.screen::-webkit-scrollbar{width:0;height:0}
+
+/* Bottom Tab Bar */
+.tabbar{background:rgba(255,255,255,.94);backdrop-filter:blur(14px);border-top:1px solid var(--line);display:flex;padding:7px 6px calc(7px + env(safe-area-inset-bottom));flex-shrink:0;z-index:10}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 2px;color:var(--muted);font-size:10.5px;font-weight:600;transition:.15s}
+.tab .ico{font-size:19px;line-height:1}
+.tab.on{color:var(--jade)}
+
+/* Cards */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:17px;box-shadow:var(--shadow);margin-bottom:13px}
+.card.hero{background:linear-gradient(145deg,#006D6B 0%,#004948 100%);color:#fff;border:0;padding:20px}
+.card.welcome{background:linear-gradient(155deg,#006564 0%,#0E7B79 55%,#1A8A7D 100%);color:#fff;border:0;padding:22px 20px}
+.card.sand{background:var(--sand);border-color:var(--sand-2)}
+.card.jade{background:var(--jade-soft);border-color:var(--jade-mid)}
+.card.gold{background:var(--gold-soft);border-color:var(--gold-line)}
+.card.bad{background:var(--red-bg);border-color:#f2b8b2}
+
+h1{font-size:22px;font-weight:800;letter-spacing:-.025em;line-height:1.18}
+h2{font-size:17px;font-weight:700;letter-spacing:-.015em}
+h3{font-size:15px;font-weight:700}
+.sub{font-size:13.5px;color:var(--muted)}
+.card.hero .sub,.card.welcome .sub{color:rgba(255,255,255,.86)}
+.small{font-size:12.5px;color:var(--muted)}
+.card.hero .small,.card.welcome .small{color:rgba(255,255,255,.8)}
+.mt1{margin-top:8px}
+.mt2{margin-top:14px}
+.row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.between{justify-content:space-between}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+
+/* Pills & Codes */
+.pill{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:99px;font-size:11.5px;font-weight:700;background:#efeae0;color:var(--ink)}
+.pill.jade{background:var(--jade-soft);color:var(--jade)}
+.pill.gold{background:var(--gold-soft);color:#8a5a0d;border:1px solid var(--gold-line)}
+.pill.ok{background:var(--ok-bg);color:var(--ok)}
+.pill.glass{background:rgba(255,255,255,.18);color:#fff}
+.code{display:inline-block;padding:3px 9px;border-radius:8px;background:var(--jade);color:#fff;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.5px;font-weight:700;letter-spacing:.03em}
+
+/* Buttons & Inputs */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:46px;padding:11px 18px;border-radius:14px;background:var(--jade);color:#fff;font-weight:700;font-size:14.5px;transition:.14s}
+.btn:active{transform:scale(.98)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.full{width:100%}
+.btn.sec{background:var(--jade-soft);color:var(--jade)}
+.btn.gold{background:var(--gold);color:#fff}
+.btn.ghost{background:#fff;border:1px solid var(--line);color:var(--ink)}
+.btn.sm{min-height:36px;padding:7px 13px;font-size:12.5px;border-radius:11px}
+textarea,input[type=text]{width:100%;border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:#fff;font-size:14px;outline:none}
+textarea:focus,input[type=text]:focus{border-color:var(--jade);box-shadow:0 0 0 3px rgba(0,101,100,.12)}
+textarea{min-height:92px;resize:vertical}
+
+/* Segmented Switch */
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:var(--sand);padding:5px;border-radius:16px;border:1px solid var(--sand-2)}
+.seg button{padding:10px 8px;border-radius:12px;font-size:13px;font-weight:700;color:var(--muted);transition:.15s;text-align:center}
+.seg button.on{background:#fff;color:var(--jade);box-shadow:0 3px 10px rgba(0,0,0,.07)}
+
+.chips{display:flex;gap:7px;flex-wrap:wrap}
+.chip{padding:7px 12px;border-radius:99px;border:1px solid var(--line);background:#fff;font-size:12px;font-weight:600}
+
+/* Role Cards */
+.role-btn{display:flex;align-items:center;gap:13px;padding:13px 14px;border:1px solid var(--line);border-radius:17px;background:#fff;width:100%;text-align:left;transition:.14s;box-shadow:0 2px 8px rgba(0,0,0,.02)}
+.role-btn:active{transform:scale(.99);background:var(--jade-soft);border-color:var(--jade-mid)}
+.role-ico{width:42px;height:42px;border-radius:13px;background:var(--jade-soft);color:var(--jade);display:grid;place-items:center;font-size:20px;flex-shrink:0}
+
+/* Lists & Timeline */
+.list{list-style:none;display:flex;flex-direction:column;gap:10px}
+.list li{display:flex;align-items:flex-start;gap:9px;font-size:13.5px}
+.step{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid #f1ece1}
+.step:last-child{border-bottom:0}
+.dot{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:700;flex:0 0 26px;background:#ebe5d8;color:var(--muted)}
+.dot.ok{background:var(--ok);color:#fff}
+.dot.now{background:var(--gold);color:#fff}
+.redact{background:var(--sand);border:1px dashed #cfc5ae;border-radius:12px;padding:9px 12px;font-size:12.5px}
+.redact mark{background:#fde5a2;padding:1px 4px;border-radius:4px}
+
+.prog{height:7px;border-radius:99px;background:rgba(255,255,255,.22);overflow:hidden;margin-top:12px}
+.prog>div{height:100%;background:#f2c76e;border-radius:99px;transition:width .3s}
+
+/* QR Modal */
+.modal-bg{position:absolute;inset:0;background:rgba(16,28,26,.55);backdrop-filter:blur(5px);display:grid;place-items:center;padding:18px;z-index:50}
+.modal{background:var(--bg);border:1px solid var(--line);border-radius:26px;padding:22px;width:100%;max-width:340px;text-align:center;box-shadow:0 24px 54px rgba(0,0,0,.28)}
+.qr-box{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px;display:inline-block;margin:12px 0}
+</style>
+</head>
+<body>
+
+<div class="stage">
+  <div class="phone">
+    <header class="appbar" id="appBar"></header>
+    <main class="screen" id="screen"></main>
+    <nav class="tabbar" id="tabBar" style="display:none"></nav>
+    <div class="modal-bg" id="qrModal" style="display:none" onclick="if(event.target===this)toggleQR(false)"></div>
+  </div>
+</div>
+
+<script>
+"use strict";
+
+const ROLES = [
+  { id:"passenger", ico:"👤", title:"Passenger", sub:"Profile, booking & assistance plan" },
+  { id:"carer", ico:"💛", title:"Carer / Family", sub:"Live milestone updates from home" },
+  { id:"staff", ico:"🪪", title:"Ground Staff", sub:"Confirm codes & scan handovers" },
+  { id:"crew", ico:"✈️", title:"Cabin Crew", sub:"Approved brief & cabin alerts" },
+  { id:"manager", ico:"📊", title:"Duty Manager", sub:"Operations & aircraft swap guard" }
+];
+
+const TABS = {
+  passenger: [
+    { id:"home", ico:"🏠", label:"Home" },
+    { id:"profile", ico:"🪪", label:"Profile" },
+    { id:"plan", ico:"📋", label:"Plan" },
+    { id:"journey", ico:"🛫", label:"Journey" },
+    { id:"ask", ico:"💬", label:"Ask" }
+  ],
+  carer: [
+    { id:"live", ico:"📍", label:"Live" },
+    { id:"updates", ico:"🔔", label:"Updates" },
+    { id:"privacy", ico:"🔒", label:"Privacy" }
+  ],
+  staff: [
+    { id:"queue", ico:"🪪", label:"Codes" },
+    { id:"card", ico:"💛", label:"Help Card" },
+    { id:"handover", ico:"✅", label:"Handover" }
+  ],
+  crew: [
+    { id:"brief", ico:"📋", label:"Brief" },
+    { id:"alerts", ico:"🔔", label:"Alerts" },
+    { id:"arrival", ico:"🛬", label:"Arrival" }
+  ],
+  manager: [
+    { id:"ops", ico:"📊", label:"Ops" },
+    { id:"guard", ico:"🛡️", label:"Swap Guard" },
+    { id:"flights", ico:"🛫", label:"HKIA" }
+  ]
+};
+
+let SESSION = { loggedIn:false, role:"passenger", persona:"leo", tab:"home" };
+let STATE = null;
+let HEALTH = { ok:false, ai:false, model:"", cathayMode:"mock" };
+let FLIGHTS = null;
+let BUSY = false;
+
+const $ = (s) => document.querySelector(s);
+function esc(s) {
+  return String(s == null ? "" : s).replace(/[&<>"']/g, (m) => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m]));
+}
+function markRedactions(s) {
+  return esc(s).replace(/\[(name|age|phone|email|ID number|document number|condition)\]/g, "<mark>$1</mark>");
+}
+
+async function loadHealth() {
+  try {
+    const r = await fetch("/api/health", { cache:"no-store" });
+    if (r.ok) HEALTH = await r.json();
+  } catch {}
+  renderAppBar();
+}
+
+async function loadFlights() {
+  try {
+    const r = await fetch("/api/flights", { cache:"no-store" });
+    if (r.ok) FLIGHTS = await r.json();
+  } catch {}
+  render();
+}
+
+async function fetchState() {
+  const r = await fetch(`/api/journey/state?role=${encodeURIComponent(SESSION.role)}&persona=${encodeURIComponent(SESSION.persona)}`, { cache:"no-store" });
+  if (r.ok) STATE = await r.json();
+  render();
+}
+
+async function act(type, payload = {}) {
+  BUSY = true;
+  render();
+  try {
+    const r = await fetch("/api/journey/action", {
+      method:"POST",
+      headers:{ "content-type":"application/json" },
+      body:JSON.stringify({ role:SESSION.role, persona:SESSION.persona, type, ...payload })
+    });
+    if (r.ok) STATE = await r.json();
+  } finally {
+    BUSY = false;
+    render();
+  }
+}
+
+function signIn(role) {
+  SESSION.role = role;
+  SESSION.loggedIn = true;
+  SESSION.tab = TABS[role][0].id;
+  fetchState();
+  if (role === "manager" && !FLIGHTS) loadFlights();
+}
+
+function signOut() {
+  SESSION.loggedIn = false;
+  STATE = null;
+  render();
+}
+
+function setPersona(p) {
+  SESSION.persona = p;
+  render();
+}
+
+function setTab(id) {
+  SESSION.tab = id;
+  render();
+}
+
+function toggleQR(show) {
+  const m = $("#qrModal");
+  if (!show) { m.style.display = "none"; return; }
+  const url = window.location.href.split("#")[0];
+  const qrSrc = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&color=006564&bgcolor=FFFFFF&data=${encodeURIComponent(url)}`;
+  m.innerHTML = `
+    <div class="modal">
+      <span class="pill jade">Mobile App</span>
+      <h2 class="mt1">Scan on your phone</h2>
+      <div class="qr-box">
+        <img src="${qrSrc}" alt="QR Code" width="185" height="185" style="display:block;border-radius:8px">
+      </div>
+      <div class="row mt1">
+        <button class="btn sec full" onclick="navigator.clipboard?.writeText('${esc(url)}');this.textContent='Copied ✓'">Copy link</button>
+        <button class="btn ghost full" onclick="toggleQR(false)">Close</button>
+      </div>
+    </div>`;
+  m.style.display = "grid";
+}
+
+function renderAppBar() {
+  const bar = $("#appBar");
+  if (!SESSION.loggedIn) {
+    bar.innerHTML = `
+      <div class="brand">
+        <div class="brand-wing">✈</div>
+        <div>
+          <div class="brand-title">Smooth Journey</div>
+          <div class="brand-sub">Accessible Travel</div>
+        </div>
+      </div>
+      <button class="icon-btn" onclick="toggleQR(true)">📱 QR</button>`;
+    return;
+  }
+  const r = ROLES.find((x) => x.id === SESSION.role);
+  const who = SESSION.role === "passenger" && STATE ? STATE.persona.account :
+              SESSION.role === "carer" && STATE ? STATE.persona.carer :
+              (r ? r.title : SESSION.role);
+  bar.innerHTML = `
+    <div class="brand">
+      <div class="brand-wing">${r ? r.ico : "✈"}</div>
+      <div style="min-width:0">
+        <div class="brand-title">${esc(who)}</div>
+        <div class="brand-sub">${STATE ? `${esc(STATE.persona.flight)} · ${esc(STATE.persona.route)}` : ""}</div>
+      </div>
+    </div>
+    <div class="appbar-actions">
+      <button class="icon-btn" onclick="toggleQR(true)">📱</button>
+      <button class="icon-btn" onclick="signOut()">Switch</button>
+    </div>`;
+}
+
+function renderTabBar() {
+  const tb = $("#tabBar");
+  if (!SESSION.loggedIn) { tb.style.display = "none"; return; }
+  const list = TABS[SESSION.role] || [];
+  tb.style.display = "flex";
+  tb.innerHTML = list.map((t) => `
+    <button class="tab ${SESSION.tab === t.id ? "on" : ""}" onclick="setTab('${t.id}')">
+      <span class="ico">${t.ico}</span>
+      <span>${t.label}</span>
+    </button>`).join("");
+}
+
+function renderLogin() {
+  return `
+    <div class="card welcome">
+      <span class="pill glass">Cathay Accessibility</span>
+      <h1 class="mt1">Known before you arrive.</h1>
+      <p class="sub mt1">One travel profile shared smoothly across every stage of your flight.</p>
+    </div>
+
+    <div class="card sand">
+      <div class="small" style="font-weight:700;margin-bottom:6px">PASSENGER JOURNEY</div>
+      <div class="seg">
+        <button class="${SESSION.persona === "leo" ? "on" : ""}" onclick="setPersona('leo')">Grace &amp; Leo (8)<br><span style="font-weight:500;font-size:11px">SYD → HKG → LHR</span></button>
+        <button class="${SESSION.persona === "chan" ? "on" : ""}" onclick="setPersona('chan')">Mrs Chan (78)<br><span style="font-weight:500;font-size:11px">HKG → LHR</span></button>
+      </div>
+    </div>
+
+    <div class="list">
+      ${ROLES.map((r) => `
+        <button class="role-btn" onclick="signIn('${r.id}')">
+          <div class="role-ico">${r.ico}</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-weight:700;font-size:14.5px">${r.title}</div>
+            <div class="small">${r.sub}</div>
+          </div>
+          <span style="color:var(--jade);font-weight:800;font-size:18px">›</span>
+        </button>`).join("")}
+    </div>
+
+    <button class="btn sec full mt2" onclick="toggleQR(true)">📱 Open on your phone (QR)</button>`;
+}
+
+/* ---------------- PASSENGER APP ---------------- */
+function renderPassenger() {
+  const s = STATE, per = s.persona, p = s.profile, b = s.booking, pl = s.plan, t = s.travel;
+  const pct = Math.round((Math.min(t.stage, s.stages.length) / s.stages.length) * 100);
+
+  if (SESSION.tab === "home") {
+    return `
+      <div class="card hero">
+        <div class="row between">
+          <span class="pill glass">${esc(per.flight)} · ${esc(b.seat)}</span>
+          <span class="pill gold">Plan v${pl.version}</span>
+        </div>
+        <h1 class="mt1">${esc(per.route)}</h1>
+        <p class="sub">${esc(per.passenger)} · ${b.booked ? esc(b.ref) : "Ready to book"}</p>
+        <div class="prog"><div style="width:${pct}%"></div></div>
+        <div class="row between mt1"><span class="small">${t.active ? `Stage ${Math.min(t.stage + 1, s.stages.length)} of ${s.stages.length}` : "Pre-travel"}</span><span class="small">${pct}%</span></div>
+      </div>
+
+      <div class="grid2">
+        <div class="card" onclick="setTab('profile')" style="cursor:pointer">
+          <span class="pill ${p.savedToMembership ? "ok" : "jade"}">${p.savedToMembership ? "Saved ✓" : p.status === "draft" ? "Draft" : "Step 1"}</span>
+          <h3 class="mt1">Profile</h3>
+          <p class="small">${p.codes.length ? `${p.codes.length} services` : "Set needs"}</p>
+        </div>
+        <div class="card" onclick="setTab('plan')" style="cursor:pointer">
+          <span class="pill ${pl.brief.status === "approved" ? "ok" : "gold"}">${pl.brief.status === "approved" ? "Approved ✓" : "Step 2"}</span>
+          <h3 class="mt1">Plan &amp; Book</h3>
+          <p class="small">${b.booked ? "Booked ✓" : "Apply profile"}</p>
+        </div>
+      </div>
+
+      <div class="card sand">
+        <div class="grid2">
+          <button class="btn gold sm" onclick="act('requestHelp')">🔔 Need help</button>
+          <button class="btn sec sm" onclick="act('changePlan',{note:'Quiet room before boarding'})">✨ Plan v${pl.version + 1}</button>
+        </div>
+        ${t.helpRequested ? `<p class="small mt1">${t.helpAcked ? "✓ Staff are on the way." : "Alert sent to staff."}</p>` : ""}
+      </div>
+
+      <div class="card">
+        <div class="row between"><h3>Sharing</h3><span class="small">${s.accessLog.length} logs</span></div>
+        <div class="row mt1">
+          <button class="btn ${s.consent.carer ? "sec" : "ghost"} sm" onclick="act('consent',{key:'carer'})">Carer ${s.consent.carer ? "ON" : "OFF"}</button>
+          <button class="btn ${s.consent.crew ? "sec" : "ghost"} sm" onclick="act('consent',{key:'crew'})">Crew ${s.consent.crew ? "ON" : "OFF"}</button>
+          <button class="btn ${s.consent.ai ? "sec" : "ghost"} sm" onclick="act('consent',{key:'ai'})">AI ${s.consent.ai ? "ON" : "OFF"}</button>
+        </div>
+      </div>`;
+  }
+
+  if (SESSION.tab === "profile") {
+    return `
+      <div class="card">
+        <div class="row between">
+          <h2>Travel Needs</h2>
+          ${p.savedToMembership ? `<span class="pill ok">Saved ✓</span>` : ""}
+        </div>
+        <div class="chips mt1">
+          <button class="chip" onclick="document.getElementById('rawNeeds').value='${esc(per.defaultText)}'">Reset</button>
+          <button class="chip" onclick="document.getElementById('rawNeeds').value+=' Also needs oxygen on board.'">+ Oxygen test</button>
+        </div>
+        <textarea id="rawNeeds" class="mt1" placeholder="Describe what help you need...">${esc(p.rawText)}</textarea>
+        <button class="btn full mt1" ${BUSY ? "disabled" : ""} onclick="act('matchProfile',{text:document.getElementById('rawNeeds').value})">Match Needs</button>
+        ${p.savedToMembership ? `<button class="btn ghost full mt1" onclick="act('deleteProfile')">Delete profile</button>` : ""}
+      </div>
+
+      ${p.status !== "none" ? `
+      <div class="card">
+        <div class="row between">
+          <h3>Matched Services</h3>
+          <span class="pill ${p.source === "ai" ? "jade" : "gold"}">${p.source === "ai" ? "✦ Gemini" : "Rules"}</span>
+        </div>
+        ${p.redacted ? `<div class="redact mt1">${markRedactions(p.redacted)}</div>` : ""}
+        <ul class="list mt1">
+          ${p.codes.map((c) => `<li><span class="code">${esc(c.code)}</span><span>${esc(c.desc)}</span></li>`).join("")}
+        </ul>
+        <p class="small mt1">Wheelchair: <b>${esc(p.wheelchairTier)}</b></p>
+        ${p.medif ? `<div class="card gold mt1" style="margin-bottom:0"><b>${esc(p.medifMessage)}</b><p class="small">Status: <code>${esc(p.clearanceStatus)}</code></p></div>` : ""}
+        ${!p.savedToMembership ? `<button class="btn sec full mt2" onclick="act('saveProfile')">Save to membership</button>` : ""}
+      </div>` : ""}`;
+  }
+
+  if (SESSION.tab === "plan") {
+    return `
+      <div class="card">
+        <div class="row between">
+          <h2>${esc(per.flight)} · ${esc(b.seat)}</h2>
+          <span class="pill jade">${b.booked ? "Booked ✓" : "Ready"}</span>
+        </div>
+        ${p.codes.length && !b.booked ? `<button class="btn full mt2" ${BUSY ? "disabled" : ""} onclick="act('applyAndBook')">Apply ${p.codes.length} services &amp; book</button>` : ""}
+        ${!p.codes.length ? `<p class="small mt1">Set your Travel Needs Profile first.</p>` : ""}
+        ${b.booked ? `<p class="small mt1">Ref <b>${esc(b.ref)}</b> · Bulkhead protected (${esc(b.cathaySource)})</p>` : ""}
+      </div>
+
+      ${pl.confirmed ? `
+      <div class="card jade">
+        <div class="row between">
+          <h3>How to help ${esc(per.passenger.split(" ")[0])}</h3>
+          <span class="pill ${pl.helpCard.status === "approved" ? "ok" : "gold"}">${pl.helpCard.status === "approved" ? "Approved ✓" : "Draft"}</span>
+        </div>
+        <ul class="list mt1">${pl.helpCard.lines.map((l) => `<li>• ${esc(l)}</li>`).join("")}</ul>
+      </div>
+      <div class="card">
+        <div class="row between">
+          <h3>Crew Brief (v${pl.version})</h3>
+          <span class="pill ${pl.brief.status === "approved" ? "ok" : "gold"}">${pl.brief.status === "approved" ? "Approved ✓" : "Draft"}</span>
+        </div>
+        ${pl.changeNote ? `<p class="small mt1">✨ ${esc(pl.changeNote)}</p>` : ""}
+        <textarea id="briefEdit" class="mt1" style="min-height:74px">${esc(pl.brief.text)}</textarea>
+        ${pl.brief.status !== "approved" ? `<button class="btn full mt1" onclick="act('approveBriefAndCard',{briefText:document.getElementById('briefEdit').value})">Approve brief &amp; card</button>` : ""}
+        <button class="btn sec full mt1" onclick="act('changePlan',{note:'Quiet room before boarding'})">Add quiet room (v${pl.version + 1})</button>
+      </div>` : ""}`;
+  }
+
+  if (SESSION.tab === "journey") {
+    return `
+      <div class="card">
+        <div class="row between">
+          <h2>Live Journey</h2>
+          <span class="pill jade">v${pl.version}</span>
+        </div>
+        ${t.aircraftSwap ? `<div class="card gold mt1"><b>Aircraft swap (${esc(t.aircraftSwap.newAircraft)})</b><p class="small">${t.aircraftSwap.status === "approved" ? "Bulkhead kept (" + esc(b.seat) + ")." : "Re-checking bulkhead…"}</p></div>` : ""}
+        <div class="mt1">
+          ${s.stages.map((st, i) => `
+            <div class="step">
+              <div class="dot ${i < t.stage ? "ok" : i === t.stage ? "now" : ""}">${i < t.stage ? "✓" : i + 1}</div>
+              <div>
+                <div style="font-weight:700;font-size:13.5px">${esc(st.name)}</div>
+                <div class="small">${esc(st.where)}</div>
+              </div>
+            </div>`).join("")}
+        </div>
+      </div>`;
+  }
+
+  return `
+    <div class="card">
+      <h2>Ask Policy</h2>
+      <div class="chips mt1">
+        <button class="chip" onclick="act('ask',{question:'Where can we wait somewhere quiet?'})">Quiet spaces?</button>
+        <button class="chip" onclick="act('ask',{question:'Can I bring a lithium battery?'})">Lithium battery?</button>
+        <button class="chip" onclick="act('ask',{question:'Can I bring my folding wheelchair?'})">Wheelchair?</button>
+      </div>
+      <div class="row mt1">
+        <input type="text" id="askQ" placeholder="Ask a question..." style="flex:1">
+        <button class="btn sm" onclick="act('ask',{question:document.getElementById('askQ').value})">Send</button>
+      </div>
+      <div class="list mt2">
+        ${s.chat.map((m) => `<li class="card ${m.from === "me" ? "jade" : m.from === "human" ? "gold" : ""}" style="margin-bottom:0;display:block;padding:12px"><b>${m.from === "me" ? "You" : m.from === "human" ? "Specialist" : "Assistant"}</b><div class="small mt1">${esc(m.text)} ${m.source ? `<span class="pill jade">${esc(m.source)}</span>` : ""}</div></li>`).join("")}
+      </div>
+    </div>`;
+}
+
+/* ---------------- CARER APP ---------------- */
+function renderCarer() {
+  const s = STATE, per = s.persona;
+  if (s.paused) {
+    return `<div class="card gold"><h2>Sharing paused</h2><p class="small mt1">${esc(per.account)} paused Carer updates.</p></div>`;
+  }
+  if (SESSION.tab === "live") {
+    const pct = Math.round((Math.min(s.travel.stage, s.stages.length) / s.stages.length) * 100);
+    return `
+      <div class="card hero">
+        <span class="pill glass">${esc(per.passenger)}</span>
+        <h1 class="mt1">${esc(s.travel.stageName)}</h1>
+        <p class="sub">${esc(per.flight)} · ${esc(per.route)}</p>
+        <div class="prog"><div style="width:${pct}%"></div></div>
+      </div>
+      <div class="card">
+        <h3>Milestones</h3>
+        <div class="mt1">
+          ${s.stages.map((st, i) => `
+            <div class="step">
+              <div class="dot ${i < s.travel.stage ? "ok" : i === s.travel.stage ? "now" : ""}">${i < s.travel.stage ? "✓" : i + 1}</div>
+              <div>
+                <div style="font-weight:700;font-size:13.5px">${esc(st.name)}</div>
+                <div class="small">${esc(st.owner)}</div>
+              </div>
+            </div>`).join("")}
+        </div>
+      </div>`;
+  }
+  if (SESSION.tab === "updates") {
+    return `
+      <div class="card">
+        <h3>Live Updates</h3>
+        <ul class="list mt1">${s.updates.length ? s.updates.map((u) => `<li><span class="pill jade">${esc(u.t)}</span><span>${esc(u.text)}</span></li>`).join("") : `<li class="small">Waiting for check-in updates.</li>`}</ul>
+      </div>`;
+  }
+  return `
+    <div class="card sand">
+      <h3>Carer Privacy</h3>
+      <p class="small mt1">Milestones only. Service codes and medical details stay private.</p>
+    </div>`;
+}
+
+/* ---------------- STAFF APP ---------------- */
+function renderStaff() {
+  const s = STATE, per = s.persona, p = s.profile, t = s.travel;
+  const st = s.stages[Math.min(t.stage, s.stages.length - 1)];
+
+  if (SESSION.tab === "queue") {
+    return `
+      <div class="card hero">
+        <div class="row between">
+          <span class="pill glass">${esc(st.name)}</span>
+          <span class="pill gold">v${s.planVersion}</span>
+        </div>
+        <h1 class="mt1">${esc(per.passenger)}</h1>
+        <p class="sub">${esc(s.booking.flight)} · ${esc(s.booking.seat)}</p>
+      </div>
+      ${t.helpRequested && !t.helpAcked ? `<div class="card bad"><div class="row between"><b>⚠ Help requested</b><button class="btn sm" onclick="act('ackHelp')">On my way</button></div></div>` : ""}
+      ${s.planChange ? `<div class="card gold"><b>v${s.planVersion}:</b> ${esc(s.planChange)}</div>` : ""}
+      <div class="card">
+        <h3>Service Codes</h3>
+        <p class="small">Wheelchair: <b>${esc(p.wheelchairTier)}</b></p>
+        ${p.medif ? `<div class="card gold mt1"><b>${esc(p.medifMessage)}</b></div>` : ""}
+        <ul class="list mt1">${p.codes.length ? p.codes.map((c, i) => `<li><span class="code">${esc(c.code)}</span><span style="flex:1">${esc(c.desc)}</span>${p.status === "draft" ? `<button class="btn ghost sm" onclick="act('removeCode',{index:${i}})">✕</button>` : ""}</li>`).join("") : `<li class="small">No codes yet.</li>`}</ul>
+        ${p.status === "draft" ? `<button class="btn full mt2" onclick="act('confirmCodes')">Confirm codes</button>` : ""}
+      </div>`;
+  }
+  if (SESSION.tab === "card") {
+    return s.helpCard.lines.length ? `
+      <div class="card jade">
+        <div class="row between"><h3>How to help ${esc(per.passenger.split(" ")[0])}</h3><span class="pill ${s.helpCard.status === "approved" ? "ok" : "gold"}">${s.helpCard.status === "approved" ? "Approved ✓" : "Draft"}</span></div>
+        <ul class="list mt2">${s.helpCard.lines.map((l) => `<li>• ${esc(l)}</li>`).join("")}</ul>
+      </div>` : `<div class="card sand"><p class="small">Available after booking.</p></div>`;
+  }
+  return `
+    <div class="card">
+      <h3>Handover</h3>
+      <p class="small mt1">Stage: <b>${t.stage >= s.stages.length ? "Complete" : esc(st.name)}</b></p>
+      ${t.stage >= s.stages.length ? `<div class="card jade mt2"><b>All 6 handovers complete ✓</b></div>` : `<button class="btn full mt2" onclick="act('completeHandover')">Complete: ${esc(st.name)}</button>`}
+    </div>`;
+}
+
+/* ---------------- CREW TABLET ---------------- */
+function renderCrew() {
+  const s = STATE, per = s.persona, b = s.booking, t = s.travel;
+  if (SESSION.tab === "brief") {
+    return `
+      <div class="card hero">
+        <div class="row between">
+          <span class="pill glass">${esc(b.flight)}</span>
+          <span class="pill gold">v${s.planVersion}</span>
+        </div>
+        <h1 class="mt1">${esc(per.passenger)} · ${esc(b.seat)}</h1>
+        ${s.planChange ? `<p class="sub mt1">✨ ${esc(s.planChange)}</p>` : ""}
+      </div>
+      <div class="card">
+        <div class="row between"><h3>Crew Brief</h3><span class="pill ${s.brief.status === "approved" ? "ok" : "gold"}">${esc(s.brief.status)}</span></div>
+        <p class="mt1">${esc(s.brief.text || "Awaiting passenger approval.")}</p>
+        <div class="chips mt2">${(s.codes || []).map((c) => `<span class="code">${esc(c.code)}</span>`).join("")}</div>
+      </div>`;
+  }
+  if (SESSION.tab === "alerts") {
+    return t.crewHelpRequested && !t.crewHelpAcked
+      ? `<div class="card bad"><b>🔔 Discreet alert · ${esc(b.seat)}</b><button class="btn full mt2" onclick="act('ackCrewHelp')">Acknowledge</button></div>`
+      : `<div class="card sand"><h3>Cabin Alerts</h3><p class="small mt1">No active alerts.</p></div>`;
+  }
+  return `
+    <div class="card">
+      <h3>Arrival Handover</h3>
+      ${t.stage === 3 ? `<button class="btn full mt2" onclick="act('handoverArrival')">Hand over to Heathrow team</button>` : `<p class="small mt1">${t.stage > 3 ? "Handed over ✓" : "Available during flight stage."}</p>`}
+    </div>`;
+}
+
+/* ---------------- DUTY MANAGER ---------------- */
+function renderManager() {
+  const s = STATE, per = s.persona, t = s.travel, b = s.booking, sw = t.aircraftSwap;
+  if (SESSION.tab === "ops") {
+    return `
+      <div class="card hero">
+        <span class="pill glass">Ground Control</span>
+        <h1 class="mt1">${esc(b.flight)} · ${esc(b.seat)}</h1>
+        <p class="sub">${esc(per.passenger)} · Plan v${s.planVersion}</p>
+      </div>
+      <div class="card">
+        <h3>Current Stage</h3>
+        <p class="mt1"><b>${t.stage >= s.stages.length ? "Complete ✓" : esc(s.stages[t.stage].name)}</b></p>
+      </div>`;
+  }
+  if (SESSION.tab === "guard") {
+    return `
+      <div class="card ${sw && sw.status === "pending" ? "gold" : ""}">
+        <h3>Aircraft Swap Guard</h3>
+        ${!sw ? `<button class="btn gold full mt2" onclick="act('simulateSwap')">Simulate aircraft swap</button>` :
+          sw.status === "pending" ? `<p class="small mt1"><b>${esc(sw.newAircraft)}</b> · Bulkhead kept (${esc(sw.newSeat)}) ✓</p><button class="btn full mt2" onclick="act('approveSwap')">Approve new plan</button>` :
+          `<p class="small mt1"><b>Approved ✓</b> · ${esc(sw.newAircraft)} · ${esc(b.seat)}</p>`}
+      </div>`;
+  }
+  return `
+    <div class="card">
+      <h3>HKIA Departures</h3>
+      ${FLIGHTS ? `<p class="mt1"><b>${FLIGHTS.total}</b> Cathay flights on ${esc(FLIGHTS.date)}</p><p class="small">${esc(FLIGHTS.source)}</p>` : `<p class="small mt1">Loading…</p>`}
+    </div>`;
+}
+
+function render() {
+  renderAppBar();
+  renderTabBar();
+  const sc = $("#screen");
+  if (!SESSION.loggedIn || !STATE) {
+    sc.innerHTML = renderLogin();
+    return;
+  }
+  if (SESSION.role === "passenger") sc.innerHTML = renderPassenger();
+  else if (SESSION.role === "carer") sc.innerHTML = renderCarer();
+  else if (SESSION.role === "staff") sc.innerHTML = renderStaff();
+  else if (SESSION.role === "crew") sc.innerHTML = renderCrew();
+  else sc.innerHTML = renderManager();
+  sc.scrollTop = 0;
+}
+
+loadHealth();
+render();
+</script>
+</body>
+</html>
