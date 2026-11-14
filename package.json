@@ -1,0 +1,17 @@
+{
+  "name": "smooth-journey",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Smooth Journey: student concept prototype for joined-up airline accessibility assistance (Cathay Hackathon 2026, team E394).",
+  "type": "module",
+  "scripts": {
+    "start": "node backend/server.mjs",
+    "test": "node --test tests/backend.test.mjs"
+  },
+  "dependencies": {
+    "@google/genai": "^1.0.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
