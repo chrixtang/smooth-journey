@@ -6,7 +6,7 @@ Smooth Journey is one optional layer in an airline app that plans, tracks and co
 
 > **Student concept prototype.** Not a Cathay Pacific product and not endorsed by Cathay Pacific. Flights, bookings and policy text are fictional. Please don't enter real personal or health information: the demo staff login is public, so treat anything you type as public.
 
-**Live app:** `https://<your-cloudfront-domain>` · **Three-phone demo:** `/demo.html` (see `SUBMISSION.md`)
+**Live app:** `https://smooth-journey-903081649355.asia-east2.run.app/` · **Three-phone demo:** `/demo.html` (see `SUBMISSION.md`)
 
 ---
 
@@ -19,8 +19,6 @@ An installable web app: open the link on a phone and tap **Add to Home Screen** 
 | **Passenger** | Self sign-up (email + verification code) | Access Passport (AI turns plain words into IATA service codes), book CX 255 with the 48-hour rule, approve the AI-drafted crew brief word for word, live journey with "I'm here, where's my help?", in-flight coach with discreet help, report a problem, Ask (AI concierge with sources), Privacy (sharing switches, invite a carer, access log, export, delete account) |
 | **Carer** | Self sign-up | Enter a one-time code from the passenger, then follow their journey live. Sees where they are, never their codes or notes. Sharing can be paused or stopped by the passenger at any time |
 | **Ground staff** | Invite-only | Check new Access Passports (remove wrong codes, then confirm). Pick their post (check-in, security, gate, Heathrow arrival) and see only passengers at that post. Confirm handovers, answer help requests |
-| **Cabin crew** | Invite-only | Pre-flight briefing with each passenger's approved brief (or safety information only, if they chose not to share), discreet help requests, hand over to the arrival team |
-| **Supervisor** | Invite-only | Live handovers, overdue and help alerts, Passports waiting, delay re-plan with human approval, **real HKIA departure data**, reset the demo |
 
 Every action updates the other phones within about four seconds.
 
