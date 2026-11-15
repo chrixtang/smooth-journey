@@ -8,7 +8,6 @@
 - **Follow Mrs Chan live (carer view):** https://smooth-journey-903081649355.asia-east2.run.app/?as=carer&p=chan
 - **Scripted walkthrough used in our video:** https://smooth-journey-903081649355.asia-east2.run.app/demo.html
 - **Codebase:** https://github.com/chrixtang/smooth-journey
-- **Fallback video:** https://REPLACE-WITH-YOUR-FALLBACK-VIDEO-LINK  <!-- TODO: add before submitting -->
 
 ## Try it (no sign-in)
 
